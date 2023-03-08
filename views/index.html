@@ -10,7 +10,8 @@
   <body>
     <div class="container">
       <h1>Exercise tracker</h1>
-      <form action="/api/users" method="post">
+      <form action="/api/users" method="post"> 
+        <!-- add id and then call this form by id to gte to log same thing than other form below(action)?-->
         <h3>Create a New User</h3>
         <p><code>POST /api/users</code></p>
         <input id="uname" type="text" name="username" placeholder="username" />
@@ -37,7 +38,8 @@
 
       exerciseForm.addEventListener("submit", () => {
         const userId = document.getElementById("uid").value;
-        exerciseForm.action = `/api/users/${userId}/exercises`;
+        exerciseForm.action = "/api/users/1/exercises" //`/api/users/${userId}/exercises`; 
+        console.log(exerciseForm.action); //http://localhost:3000/api/users/1/exercises try hardcoding without localhost in to see if this fixes the problem? or need changes to url encoded-> try see if log something else first when set as in example?
 
         exerciseForm.submit();
       });

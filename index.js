@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const User = require("./models/user");
+const Exercise = require("./models/exercise");
 const cors = require('cors');
 require('dotenv').config();
 
@@ -9,7 +10,7 @@ const app = express()
 
 
 mongoose
-  .connect('mongodb+srv://annefiger:pChsE2BoyqEy8GXv@exercise-tracker.olxjy6t.mongodb.net/?retryWrites=true&w=majority',
+  .connect(process.env.DBURL,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -22,7 +23,7 @@ mongoose
 
 app.use(cors())
 app.use(express.static('public'))
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -31,19 +32,41 @@ app.get('/', (req, res) => {
 
 
 
-// You can POST to /api/users with form data username to create a new user.
+// POST to /api/users with form data username to create a new user.
 app.post("/api/users", function (req, res) {
   const user = new User({
     username : req.body.username
   });
   user.save().then((result) => {
      res.send(
-      result   // see if need to get rid of v_
+      result   // see if need to get rid of v_ /use valueof ObjectId in response?
      );
    })
 });
 
+app.post("/api/users/1/exercises", function(req, res) { //:_id
+  res.send(req.body.duration); //undefined
+  // console.log(req.fields) //undefined, also undefined for req.fields.description
+ 
 
+  // const exercise = new Exercise({
+  //   username : "harcoded for this round",
+  //   description: req.body.desc,
+  //   duration: req.body.duration,
+  //   date: req.body.date,
+  // });
+  // exercise.save().then((result) => {
+  //   res.send(
+  //     result
+  //   );
+  // })
+})
+
+app.get("/api/users", function(req, res){
+  User.find({}).then((result)=> {
+    res.send(result)
+  })
+});
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
