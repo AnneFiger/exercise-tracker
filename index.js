@@ -45,12 +45,18 @@ app.post("/api/users", function (req, res) {
 
 app.post("/api/users/:_id/exercises", function(req, res) { 
   // res.send(req.body.duration); 
- 
+  if(req.body.date){
+    dateFromInput = new Date(req.body.date);
+    date = dateFromInput.toDateString()
+  }else{
+    today = new Date();
+    date = today.toDateString()
+  }
   const exercise = new Exercise({
     username : "harcoded for this round",
     description: req.body.description,
     duration: req.body.duration,
-    date: req.body.date,
+    date: date
   });
   exercise.save().then((result) => {
     res.send(
