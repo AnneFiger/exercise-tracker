@@ -8,7 +8,6 @@ require('dotenv').config();
 const app = express()
 
 
-
 mongoose
   .connect(process.env.DBURL,
   {
@@ -44,22 +43,20 @@ app.post("/api/users", function (req, res) {
    })
 });
 
-app.post("/api/users/1/exercises", function(req, res) { //:_id
-  res.send(req.body.duration); //undefined
-  // console.log(req.fields) //undefined, also undefined for req.fields.description
+app.post("/api/users/:_id/exercises", function(req, res) { 
+  // res.send(req.body.duration); 
  
-
-  // const exercise = new Exercise({
-  //   username : "harcoded for this round",
-  //   description: req.body.desc,
-  //   duration: req.body.duration,
-  //   date: req.body.date,
-  // });
-  // exercise.save().then((result) => {
-  //   res.send(
-  //     result
-  //   );
-  // })
+  const exercise = new Exercise({
+    username : "harcoded for this round",
+    description: req.body.description,
+    duration: req.body.duration,
+    date: req.body.date,
+  });
+  exercise.save().then((result) => {
+    res.send(
+      result
+    );
+  })
 })
 
 app.get("/api/users", function(req, res){
