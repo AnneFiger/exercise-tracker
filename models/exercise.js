@@ -6,6 +6,7 @@ const exerciseSchema = new Schema({
     description: String,
     duration: Number,
     date: String,
+    _id: String
 });
 
 const Exercise = mongoose.model('Exercise', exerciseSchema);
