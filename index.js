@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const User = require("./models/user");
-const Exercise = require("./models/exercise");
+const Log = require("./models/log");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -46,22 +46,39 @@ app.post("/api/users/:_id/exercises", function (req, res) {
     today = new Date();
     date = today.toDateString();
   }
-  User.findOne({ _id: id }).select({__v: 0}).then((result) => { //select might be useless
-    userData = result; // worth refactoring so everything is stored in a user log and we're just retrieving part of the response depending what we want?
-    console.log(userData);
-    const exercise = new Exercise({
+  User.findOne({ _id: id }).then((result) => { 
+    userData = result;
+    const exerciseToAdd = {
       username: userData["username"],
-      // username: "harcoded for this round",
       description: req.body.description,
       duration: req.body.duration,
       date: date,
-      _id: id      
-    });
-    exercise.save().then((result) => {
-      res.send(result);
-    });
-  })
+    };
+    Log.findById(id).then((result) => { //needs other block if no prior log entry- or code this when creating user??? //see similar implementation counter- TODO
+      console.log(result);
+      result.log.push(exerciseToAdd);
+      result.save().then((result) => {
+       res.send(result);
+      });
+    });    
+  });// ... no longer accept a callback error search see how to do error in new idiomatic way if possible
+
+  
+  
+//_id: id // problem duplicate key error cpllection if adding another exercise for same user     
+  // User.findOne({ _id: id }).then((result) => { 
+  //   userData = result; 
+  //   exercise.save().then((result) => {
+  //     res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
+  //   });
+  // })
+
+
 });
+
+
+
+
 
 app.get("/api/users", function (req, res) {
   User.find({}).then((result) => {
