@@ -47,37 +47,38 @@ app.post("/api/users/:_id/exercises", function (req, res) {
     date = today.toDateString();
   }
   User.findOne({ _id: id }).then((result) => { 
+    // if(result == null) {
+    //   res.send('unknow user!');
+    // }
     userData = result;
+    username = userData["username"];
     const exerciseToAdd = {
-      username: userData["username"],
       description: req.body.description,
       duration: req.body.duration,
       date: date,
     };
-    Log.findById(id).then((result) => { //needs other block if no prior log entry- or code this when creating user??? //see similar implementation counter- TODO
-      console.log(result);
-      result.log.push(exerciseToAdd);
-      result.save().then((result) => {
-       res.send(result);
-      });
+    Log.findByIdAndUpdate(id).then((result) => { //now needs to implement counter instead of hardcoding it as 1 - TODO
+      if(result == null) {
+        const newlog = new Log({
+          username: username,
+          count: 1,
+          _id: id,
+          log: exerciseToAdd
+        });
+        newlog.save().then((result) => {
+          res.send(result);
+        });  
+      }else{
+        console.log(result); //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data 
+        result.log.push(exerciseToAdd);
+        result.save().then((result) => {
+          res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
+        });
+      }
     });    
-  });// ... no longer accept a callback error search see how to do error in new idiomatic way if possible
-
-  
-  
-//_id: id // problem duplicate key error cpllection if adding another exercise for same user     
-  // User.findOne({ _id: id }).then((result) => { 
-  //   userData = result; 
-  //   exercise.save().then((result) => {
-  //     res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
-  //   });
-  // })
-
+  });// better refactor + see how to do error in new idiomatic way if possible?
 
 });
-
-
-
 
 
 app.get("/api/users", function (req, res) {

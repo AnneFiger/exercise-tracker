@@ -5,10 +5,7 @@ const logSchema = new Schema({
     username: {required: true, type: String},
     count: Number,
     _id: String,
-    log: [Object] // this could cause a problem
-    // description: String,
-    // duration: Number,
-    // date: String,
+    log: [Object] 
 });
 
 const Log = mongoose.model('Log', logSchema);
