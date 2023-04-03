@@ -54,10 +54,10 @@ app.post("/api/users/:_id/exercises", function (req, res) {
     username = userData["username"];
     const exerciseToAdd = {
       description: req.body.description,
-      duration: req.body.duration,
+      duration: parseInt(req.body.duration),
       date: date,
     };
-    Log.findByIdAndUpdate(id).then((result) => { //now needs to implement counter instead of hardcoding it as 1 - TODO
+    Log.findByIdAndUpdate(id).then((result) => { 
       if(result == null) {
         const newlog = new Log({
           username: username,
@@ -69,7 +69,8 @@ app.post("/api/users/:_id/exercises", function (req, res) {
           res.send(result);
         });  
       }else{
-        console.log(result); //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data 
+        console.log(result); //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data
+        result.count ++; //increment the counter- works here as we don't have a specification to delete entries - also seems follow what __v is storing
         result.log.push(exerciseToAdd);
         result.save().then((result) => {
           res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
@@ -86,6 +87,13 @@ app.get("/api/users", function (req, res) {
     res.send(result);
   });
 });
+
+app.get("/api/users/:_id/logs", function (req, res) {
+  const id = req.params._id;
+  Log.findById(id).then((result) => {
+    res.send(result);
+  })
+})
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log("Your app is listening on port " + listener.address().port);
