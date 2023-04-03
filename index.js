@@ -90,9 +90,47 @@ app.get("/api/users", function (req, res) {
 
 app.get("/api/users/:_id/logs", function (req, res) {
   const id = req.params._id;
-  Log.findById(id).then((result) => {
-    res.send(result);
-  })
+  const onlythese = req.query.limit;
+  const timePeriodFrom = req.query.from;
+  const timePeriodTo = req.query.to;
+  console.log(typeof onlythese); //string which might be a problem
+
+  if(timePeriodFrom||timePeriodTo){
+    const d2 = Date.parse(timePeriodTo);
+    Log.findById(id)
+     .then((result) => {
+       const logsToSearchThrough = result.log;
+       const filteredByDate = logsToSearchThrough.filter(exercise => (Date.parse(exercise["date"]) <= d2));
+       res.send(filteredByDate);
+     });
+  }else{
+    Log.findById(id)
+     .then((result) => {    
+       res.send(result.log.slice(0, onlythese)); 
+     });
+  }
+
+  // You can add from, to and limit parameters to a GET /api/users/:_id/logs request 
+  // to retrieve part of the log of any user. from and to are dates in yyyy-mm-dd format. 
+  // limit is an integer of how many logs to send back.
+
+  //http://localhost:3000/api/users/640799edfe3ca4272ad300ea/logs?limit=2 example query
+  //http://localhost:3000/api/users/640799edfe3ca4272ad300ea/logs?to=2023-04-01
+
+//   localhost:3000/show?name=luis&address=California&id=123', and your code you be like:
+
+// app.get('/show', function(req, res) {
+//     res.json({
+//         name: req.query.name,
+//         surname: req.query.surname,
+//         address: req.query.address,
+//         id: req.query.id,
+//         phone: req.query.phone
+//     });
+// });
+
+//{createdAt:{$gte:ISODate(“2020-03-01”),$lt:ISODate(“2021-04-01”)}}
+
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
