@@ -63,7 +63,7 @@ app.post("/api/users/:_id/exercises", function (req, res) {
           username: username,
           count: 1,
           _id: id,
-          log: exerciseToAdd //[]?
+          log: [exerciseToAdd] //[]?
         });
         newlog.save().then((result) => {
           res.send(result);
