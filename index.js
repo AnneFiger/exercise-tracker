@@ -96,12 +96,18 @@ app.get("/api/users/:_id/logs", function (req, res) {
   console.log(typeof onlythese); //string which might be a problem
 
   if(timePeriodFrom||timePeriodTo){
-    const d2 = Date.parse(timePeriodTo);
+    const dateFrom = (Date.parse(timePeriodFrom))||0;
+    const dateTo = (Date.parse(timePeriodTo));
     Log.findById(id)
      .then((result) => {
        const logsToSearchThrough = result.log;
-       const filteredByDate = logsToSearchThrough.filter(exercise => (Date.parse(exercise["date"]) <= d2));
-       res.send(filteredByDate);
+       const filteredByDate = logsToSearchThrough.filter(exercise => (Date.parse(exercise["date"]) >= dateFrom));
+       if(dateTo){
+        const filteredByBothDates = filteredByDate.filter(exercise => (Date.parse(exercise["date"]) <= dateTo));
+        res.send(filteredByBothDates.slice(0, onlythese));
+        }else{
+          res.send(filteredByDate.slice(0, onlythese));
+        }
      });
   }else{
     Log.findById(id)
