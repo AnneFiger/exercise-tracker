@@ -69,9 +69,9 @@ app.post("/api/users/:_id/exercises", function (req, res) {
           res.send(result);
         });  
       }else{
-        console.log(result);
-        console.log(result.log[0]);
-        console.log(typeof result.log[0]); //object
+        // console.log(result);
+        // console.log(result.log[0]);
+        // console.log(typeof result.log[0]); //object
         //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data
         result.count ++; //increment the counter- works here as we don't have a specification to delete entries - also seems follow what __v is storing
         result.log.push(exerciseToAdd);
@@ -87,7 +87,7 @@ app.post("/api/users/:_id/exercises", function (req, res) {
 
 app.get("/api/users", function (req, res) {
   User.find({}).then((result) => {
-    res.send(result);
+    res.send(result); //need to be res.json(??)
   });
 });
 
