@@ -5,7 +5,7 @@ const logSchema = new Schema({
     username: {required: true, type: String},
     count: Number,
     _id: String,
-    log: [Object] 
+    log: {type: [Object]} 
 });
 
 const Log = mongoose.model('Log', logSchema);
