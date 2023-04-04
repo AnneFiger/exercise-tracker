@@ -63,13 +63,16 @@ app.post("/api/users/:_id/exercises", function (req, res) {
           username: username,
           count: 1,
           _id: id,
-          log: exerciseToAdd
+          log: exerciseToAdd //[]?
         });
         newlog.save().then((result) => {
           res.send(result);
         });  
       }else{
-        console.log(result); //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data
+        console.log(result);
+        console.log(result.log[0]);
+        console.log(typeof result.log[0]); //object
+        //here the id will go first, not sure if this is a problem. Probably due to how MongoDb stores data
         result.count ++; //increment the counter- works here as we don't have a specification to delete entries - also seems follow what __v is storing
         result.log.push(exerciseToAdd);
         result.save().then((result) => {
@@ -93,7 +96,7 @@ app.get("/api/users/:_id/logs", function (req, res) {
   const onlythese = req.query.limit;
   const timePeriodFrom = req.query.from;
   const timePeriodTo = req.query.to;
-  console.log(typeof onlythese); //string which might be a problem
+  // console.log(typeof onlythese); //string which might be a problem
 
   if(timePeriodFrom||timePeriodTo){
     const dateFrom = (Date.parse(timePeriodFrom))||0;
@@ -111,7 +114,8 @@ app.get("/api/users/:_id/logs", function (req, res) {
      });
   }else{
     Log.findById(id)
-     .then((result) => {    
+     .then((result) => {  
+         
        res.send(result.log.slice(0, onlythese)); 
      });
   }
