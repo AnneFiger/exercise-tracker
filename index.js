@@ -66,7 +66,8 @@ app.post("/api/users/:_id/exercises", function (req, res) {
           log: [exerciseToAdd] //[]?
         });
         newlog.save().then((result) => {
-          res.send(result);
+          res.json({_id: result._id, username: result.username, description: result.log[0]["description"], duration: result.log[0]["duration"], date: result.log[0]["date"]})
+          // res.send(result);
         });  
       }else{
         // console.log(result);
@@ -76,7 +77,8 @@ app.post("/api/users/:_id/exercises", function (req, res) {
         result.count ++; //increment the counter- works here as we don't have a specification to delete entries - also seems follow what __v is storing
         result.log.push(exerciseToAdd);
         result.save().then((result) => {
-          res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
+          res.json({_id: result._id, username: result.username, description: exerciseToAdd.description, duration: exerciseToAdd.duration, date: exerciseToAdd.date })
+          // res.send(result); //select equivalent on result? or use key as above[""] .select({__v: 0})
         });
       }
     });    
